@@ -1,3 +1,8 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pickle
+from sklearn.preprocessing import LabelEncoder
 
 # === 🕐 Step 1: Time-based features
 def prepare_datetime_features(df):
@@ -62,30 +67,30 @@ def predict_sales(test_df):
 # === 🖥️ Streamlit app
 st.title("🛒 Store Sales Prediction App")
 
-# Create a form to input the data manually
-with st.form(key='manual_input_form'):
-    st.header("🚶‍♂️ أدخل بيانات المتجر يدويًا")
+# Create form for manual data entry
+st.header("🚶‍♂️ أدخل بيانات المتجر يدويًا")
 
-    date = st.date_input("🗓️ اختر التاريخ", pd.to_datetime("2023-01-01"))
-    store_nbr = st.number_input("🏪 رقم المتجر", min_value=1, step=1)
-    family = st.selectbox("📦 العائلة", options=["family1", "family2", "family3"])  # Add your family options
-    onpromotion = st.number_input("📉 المنتجات في العرض", min_value=0, step=1)
+date = st.date_input("🗓️ اختر التاريخ", pd.to_datetime("2023-01-01"))
+store_nbr = st.number_input("🏪 رقم المتجر", min_value=1, step=1)
+family = st.selectbox("📦 العائلة", options=["family1", "family2", "family3"])  # Replace with your family options
+onpromotion = st.number_input("📉 المنتجات في العرض", min_value=0, step=1)
 
-    # Submit button
-    submit_button = st.form_submit_button(label="🔮 تنبأ بالمبيعات")
+# Prepare data for prediction
+input_data = pd.DataFrame({
+    'date': [date],
+    'store_nbr': [store_nbr],
+    'family': [family],
+    'onpromotion': [onpromotion]
+})
 
-if submit_button:
-    # Prepare data for prediction
-    input_data = pd.DataFrame({
-        'date': [date],
-        'store_nbr': [store_nbr],
-        'family': [family],
-        'onpromotion': [onpromotion]
-    })
-
+# Predict button
+if st.button("🔮 تنبأ بالمبيعات"):
     try:
+        # Make prediction
         result_df = predict_sales(input_data)
         st.success("تمت العملية بنجاح!")
+        
+        # Display the result
         st.dataframe(result_df)
 
         # Save the prediction to a CSV file
