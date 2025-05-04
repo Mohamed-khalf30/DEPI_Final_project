@@ -68,12 +68,20 @@ def predict_sales(test_df):
 st.title("🛒 Store Sales Prediction App")
 
 # Create form for manual data entry
-st.header("🚶‍♂️ أدخل بيانات المتجر يدويًا")
+st.header("Enter Store Data Manually")
 
-date = st.date_input("🗓️ اختر التاريخ", pd.to_datetime("2023-01-01"))
-store_nbr = st.number_input("🏪 رقم المتجر", min_value=1, step=1)
-family = st.selectbox("📦 العائلة", options=["family1", "family2", "family3"])  # Replace with your family options
-onpromotion = st.number_input("📉 المنتجات في العرض", min_value=0, step=1)
+date = st.date_input("🗓️ Select Date", pd.to_datetime("2023-01-01"))
+store_nbr = st.number_input("🏪 Store Number", min_value=1, step=1)
+family = st.selectbox("📦 Product Family", options=[
+    "GROCERY I", "BEVERAGES", "PRODUCE", "CLEANING", "DAIRY", "BREAD/BAKERY",
+    "POULTRY", "MEATS", "PERSONAL CARE", "DELI", "HOME CARE", "EGGS",
+    "FROZEN FOODS", "PREPARED FOODS", "LIQUOR,WINE,BEER", "SEAFOOD", "GROCERY II",
+    "HOME AND KITCHEN I", "HOME AND KITCHEN II", "CELEBRATION", "LINGERIE",
+    "LADIESWEAR", "PLAYERS AND ELECTRONICS", "AUTOMOTIVE", "LAWN AND GARDEN",
+    "PET SUPPLIES", "BEAUTY", "SCHOOL AND OFFICE SUPPLIES", "MAGAZINES",
+    "HARDWARE", "HOME APPLIANCES", "BABY CARE", "BOOKS"
+])
+onpromotion = st.number_input("📉 Items on Promotion", min_value=0, step=1)
 
 # Prepare data for prediction
 input_data = pd.DataFrame({
@@ -84,23 +92,23 @@ input_data = pd.DataFrame({
 })
 
 # Predict button
-if st.button("🔮 تنبأ بالمبيعات"):
+if st.button("🔮 Predict Sales"):
     try:
         # Make prediction
         result_df = predict_sales(input_data)
-        st.success("تمت العملية بنجاح!")
-        
+        st.success("Prediction successful!")
+
         # Display the result
         st.dataframe(result_df)
 
         # Save the prediction to a CSV file
         csv = result_df.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="⬇️ تحميل ملف submission.csv",
+            label="⬇️ Download submission.csv",
             data=csv,
             file_name='submission.csv',
             mime='text/csv'
         )
 
     except Exception as e:
-        st.error(f"حصل خطأ: {e}")
+        st.error(f"An error occurred: {e}")
