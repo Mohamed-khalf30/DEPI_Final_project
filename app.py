@@ -65,14 +65,14 @@ def predict_sales(test_df):
     return test_original
 
 # === 🖥️ Streamlit app
-st.title("🛒 Store Sales Prediction App")
+st.title("Store Sales Prediction App")
 
 # Create form for manual data entry
 st.header("Enter Store Data Manually")
 
 date = st.date_input("🗓️ Select Date", pd.to_datetime("2023-01-01"))
-store_nbr = st.number_input("🏪 Store Number", min_value=1, step=1)
-family = st.selectbox("📦 Product Family", options=[
+store_nbr = st.number_input("Store Number 🏪", min_value=1, step=1)
+family = st.selectbox("Product Family 📦", options=[
     "GROCERY I", "BEVERAGES", "PRODUCE", "CLEANING", "DAIRY", "BREAD/BAKERY",
     "POULTRY", "MEATS", "PERSONAL CARE", "DELI", "HOME CARE", "EGGS",
     "FROZEN FOODS", "PREPARED FOODS", "LIQUOR,WINE,BEER", "SEAFOOD", "GROCERY II",
@@ -81,7 +81,7 @@ family = st.selectbox("📦 Product Family", options=[
     "PET SUPPLIES", "BEAUTY", "SCHOOL AND OFFICE SUPPLIES", "MAGAZINES",
     "HARDWARE", "HOME APPLIANCES", "BABY CARE", "BOOKS"
 ])
-onpromotion = st.number_input("📉 Items on Promotion", min_value=0, step=1)
+onpromotion = st.number_input("Items on Promotion 📉", min_value=0, step=1)
 
 # Prepare data for prediction
 input_data = pd.DataFrame({
