@@ -1,8 +1,3 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import pickle
-from sklearn.preprocessing import LabelEncoder
 
 # === 🕐 Step 1: Time-based features
 def prepare_datetime_features(df):
@@ -67,24 +62,40 @@ def predict_sales(test_df):
 # === 🖥️ Streamlit app
 st.title("🛒 Store Sales Prediction App")
 
-uploaded_file = st.file_uploader("⬆️ حمّل ملف test.csv", type="csv")
+# Create a form to input the data manually
+with st.form(key='manual_input_form'):
+    st.header("🚶‍♂️ أدخل بيانات المتجر يدويًا")
 
-if uploaded_file is not None:
-    test_df = pd.read_csv(uploaded_file)
+    date = st.date_input("🗓️ اختر التاريخ", pd.to_datetime("2023-01-01"))
+    store_nbr = st.number_input("🏪 رقم المتجر", min_value=1, step=1)
+    family = st.selectbox("📦 العائلة", options=["family1", "family2", "family3"])  # Add your family options
+    onpromotion = st.number_input("📉 المنتجات في العرض", min_value=0, step=1)
 
-    if st.button("🔮 تنبأ بالمبيعات"):
-        try:
-            result_df = predict_sales(test_df)
-            st.success("تمت العملية بنجاح!")
+    # Submit button
+    submit_button = st.form_submit_button(label="🔮 تنبأ بالمبيعات")
 
-            st.dataframe(result_df.head())
+if submit_button:
+    # Prepare data for prediction
+    input_data = pd.DataFrame({
+        'date': [date],
+        'store_nbr': [store_nbr],
+        'family': [family],
+        'onpromotion': [onpromotion]
+    })
 
-            csv = result_df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="⬇️ تحميل ملف submission.csv",
-                data=csv,
-                file_name='submission.csv',
-                mime='text/csv'
-            )
-        except Exception as e:
-            st.error(f"حصل خطأ: {e}")
+    try:
+        result_df = predict_sales(input_data)
+        st.success("تمت العملية بنجاح!")
+        st.dataframe(result_df)
+
+        # Save the prediction to a CSV file
+        csv = result_df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="⬇️ تحميل ملف submission.csv",
+            data=csv,
+            file_name='submission.csv',
+            mime='text/csv'
+        )
+
+    except Exception as e:
+        st.error(f"حصل خطأ: {e}")
